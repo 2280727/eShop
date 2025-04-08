@@ -57,6 +57,7 @@ jobs:
             docker run -d \
               --name product-service \
               --restart unless-stopped \
+              -e POSTGRES_PASSWORD ${{secrets.POSTGRES_PASSWORD}} \
               -p 7000:3000 \
               ${{ env.DOCKER_IMAGE }}"
               
