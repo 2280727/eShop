@@ -28,6 +28,9 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Build and push Docker image
+        permissions:
+          contents: read
+          packages: write
         run: |
           docker build --platform linux/amd64 -t ${{ env.DOCKER_IMAGE }} ./product-service
           docker push ${{ env.DOCKER_IMAGE }}
@@ -53,4 +56,4 @@ jobs:
               --restart unless-stopped \
               -p 7000:3000 \
               ${{ env.DOCKER_IMAGE }}"
-              
+
