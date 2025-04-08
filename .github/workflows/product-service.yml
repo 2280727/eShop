@@ -36,29 +36,28 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build --platform linux/amd64 -t ${{ env.DOCKER_IMAGE }} ./product-service
-            docker push ${{ env.DOCKER_IMAGE }}
+          docker push ${{ env.DOCKER_IMAGE }}
 
-    deploy:
-      needs: test-and-build
-      runs-on: ubuntu-latest
-      steps:
-        - name: Install SSH key
-          uses: shimataro/ssh-key-action@v2
-          with:
-            key: ${{ secrets.SSH_PRIVATE_KEY }}
-            known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+  deploy:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
-        - name: Deploy to server
-          run: |
-            ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} "
-              docker pull ${{ env.DOCKER_IMAGE }} && \
-              docker stop product-service || true && \
-              docker rm product-service || true && \
-              docker run -d \
-                --name product-service \
-                --restart unless-stopped \
-                -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
-                -p 7000:3000 \
-                ${{ env.DOCKER_IMAGE }}"
-
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} "
+            docker pull ${{ env.DOCKER_IMAGE }} && \
+            docker stop product-service || true && \
+            docker rm product-service || true && \
+            docker run -d \
+              --name product-service \
+              --restart unless-stopped \
+              -e POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}} \
+              -p 7000:3000 \
+              ${{ env.DOCKER_IMAGE }}"
               
