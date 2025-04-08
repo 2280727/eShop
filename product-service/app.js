@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 
 app.get('/', (req, res) => {
-   res.send("Landing page")
+   res.send("Landing page check")
 })
 
 sequelize.sync();

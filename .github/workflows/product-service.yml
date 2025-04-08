@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "develop" ]
     paths:
-      - '/product-service/**'
+      - 'product-service/**'
       - '.github/workflows/product-service.yml'
 
 env:
