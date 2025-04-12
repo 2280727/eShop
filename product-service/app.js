@@ -1,13 +1,26 @@
 import express from 'express';
 import sequelize from './db.js';
+import productRouter from './routes/productRouter.js'
+import { NotFoundError } from './errors/index.js';
 
 
 const app = express();
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-   res.send("Landing page check")
+app.use('/products', productRouter);
+
+app.use((error, req, res, next) => {
+    console.error("Error", error)
+    if(error instanceof NotFoundError){
+        return res.status(error.statusCode).json({
+            error: error.message,
+            details: error.errors
+        })
+    }
+    return res.status(500).json({
+        error: "Oops something went wrong, try again later"
+    })
 })
 
 sequelize.sync();

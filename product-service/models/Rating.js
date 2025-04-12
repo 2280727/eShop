@@ -23,10 +23,12 @@ const Rating = sequelize.define('Rating', {
     }
 },{
     timestamps: false,
+    tableName: 'Rating',
+    freezeTableName: true // Prevent Sequelize from pluralizing
 })
 
 
-Product.hasOne(Rating, { foreignKey: 'productUuid', onDelete: 'CASCADE' });
+Product.hasOne(Rating, { foreignKey: 'productUuid', as: 'rating', onDelete: 'CASCADE' });
 Rating.belongsTo(Product, { foreignKey: 'productUuid' });
 
 export default Rating;
