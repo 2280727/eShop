@@ -1,5 +1,5 @@
 import { NotFoundError } from '../errors/index.js';
-import { getAllProducts, getProductsByCategory }from '../services/productService.js';
+import { getAllProducts, getCategories, getProductsByCategory }from '../services/productService.js';
 
 const getProductsController = async (req, res, next) => {
     try {
@@ -7,6 +7,15 @@ const getProductsController = async (req, res, next) => {
         res.status(200).json(results)
     } catch (err) {
         next(err)
+    }
+}
+
+const getCategoriesController = async (req, res, next) => {
+    try {
+        const results = await getCategories();
+        res.status(200).json(results);
+    } catch (error) {
+        next(error)
     }
 }
 
@@ -26,5 +35,6 @@ const getProductsByCategoryController = async (req, res, next) =>{
 
 export {
     getProductsController,
+    getCategoriesController,
     getProductsByCategoryController
 }

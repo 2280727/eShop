@@ -11,6 +11,10 @@ const getAllProducts = async () => {
     })
 }
 
+const getCategories = async () => {
+    return Product.rawAttributes.category.type.values;
+}
+
 const getProductsByCategory = async (category) => {
     return await Product.findAll({
         where: {
@@ -26,4 +30,5 @@ const getProductsByCategory = async (category) => {
 
 export {
     getAllProducts,
+    getCategories,
     getProductsByCategory}
