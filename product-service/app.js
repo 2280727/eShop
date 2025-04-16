@@ -1,9 +1,9 @@
 import express from 'express';
 import sequelize from './connections/db.js';   
-import redisClient from './connections/redis.js';
 import productRouter from './routes/productRouter.js'
 import { NotFoundError } from './errors/index.js';
 import cors from 'cors'
+import { rateLimiter } from './middlewares/rate-limiter.js';
 
 
 const app = express();
@@ -11,6 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.use(rateLimiter)
 app.use('/products', productRouter);
 
 app.use((error, req, res, next) => {
