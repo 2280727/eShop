@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { getCategoriesController, getProductsController, getProductsByCategoryController } from '../../controller/productController.js';
+import { getCategoriesController, getProductsController, getProductsByCategoryController, createProductController } from '../../controller/productController.js';
 import * as productService from '../../services/productService.js';
 
 // Mock the database models
@@ -8,6 +8,7 @@ jest.mock('../../models/Product.js', () => {
     __esModule: true,
     default: {
       findAll: jest.fn(),
+      create: jest.fn(),
       rawAttributes: {
         category: {
           type: {
@@ -153,6 +154,62 @@ describe('Products Controller', () => {
         
         expect(next.calledWith(error)).toBe(true);
       });
+    });
+
+    describe('createProduct', () => {
+        it('should create a new product successfully', async () => {
+            const productData = {
+                "title": "New Test Product",
+                "price": 29.99,
+                "description": "This is a test product description that is longer than 10 characters",
+                "category": "men's clothing",
+                "image": "https://test-image-url.com/image.jpg",
+                "rating": {
+                    "rate": 4.2,
+                    "count": 120
+                }
+            };
+            
+            const createdProduct = { 
+                id: 10, 
+                ...productData 
+            };
+            
+            req = { body: productData };
+            
+            // Mock the service function
+            const serviceStub = sinon.stub(productService, 'createProduct').resolves(createdProduct);
+            
+            // Call the controller
+            await createProductController(req, res, next);
+            
+            // Validate response/assert
+            expect(serviceStub.calledOnce).toBe(true);
+            expect(serviceStub.calledWith(productData)).toBe(true);
+            expect(res.status.calledWith(201)).toBe(true);
+            expect(res.json.calledWith(createdProduct)).toBe(true);
+        });
+        
+        it('should call next with error when service fails', async () => {
+            const error = new Error('Failed to create product');
+            const productData = {
+                "title": "Invalid Product",
+                "price": 29.99
+            };
+            
+            req = { body: productData };
+            
+            // Mock service to throw error
+            sinon.stub(productService, 'createProduct').rejects(error);
+            
+            // Call the controller
+            await createProductController(req, res, next);
+            
+            // Verify error handling
+            expect(next.calledWith(error)).toBe(true);
+            expect(res.status.called).toBe(false);
+            expect(res.json.called).toBe(false);
+        });
     });
     
 });

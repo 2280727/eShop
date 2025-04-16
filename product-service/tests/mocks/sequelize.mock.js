@@ -45,6 +45,7 @@ const mockSequelize = new MockSequelize();
 // Mock Product model
 const mockProductModel = {
   findAll: jest.fn(),
+  create: jest.fn(),
   rawAttributes: {
     category: {
       type: {

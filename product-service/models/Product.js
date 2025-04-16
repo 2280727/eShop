@@ -1,5 +1,6 @@
 import sequelize from "../db.js";
 import { DataTypes, Sequelize } from "sequelize";
+import { productCategories } from "../data/product.js";
 
 
 
@@ -18,7 +19,7 @@ const Product = sequelize.define('Product', {
         allowNull: false
     },
     category: {
-        type: DataTypes.ENUM("men's clothing", "women's clothing", "jewelery", "electronics"),
+        type: DataTypes.ENUM(productCategories),
         allowNull: false
     },
     image: {
