@@ -1,40 +1,54 @@
 import { productCategories } from "../data/product.js";
-import sequelize from "../db.js";
+import sequelize from "../connections/db.js";
 import { Op } from "sequelize";
 import Product from "../models/Product.js";
 import Rating from "../models/Rating.js";
+import redisClient from "../connections/redis.js";
 
 const getAllProducts = async (page, size, searchTitle) => {
-    let pageNumber = 0;
-    if (!Number.isNaN(page) && page > 0) {
-        pageNumber = page;
+    const cacheKey = `products:${page}:${size}:${searchTitle}`;
+    const cachedData = await redisClient.get(cacheKey);
+    let products;
+    if (cachedData) {
+        products = JSON.parse(cachedData);
+        return {
+            products,
+            pageCount: Math.ceil(products.length / size)
+        }
+    } else {    
+
+        let pageNumber = 0;
+        if (!Number.isNaN(page) && page > 0) {
+            pageNumber = page;
+        }
+        let sizeNumber = 10;
+        if (!Number.isNaN(size) && size > 0 && size < 10) {
+            sizeNumber = size;
+        }
+
+        const whereClause = searchTitle ? { title: { [Op.like]: `%${searchTitle}%` } } : {};
+
+        const results = await Product.findAndCountAll({
+            where: whereClause,
+            limit: sizeNumber,
+            offset: pageNumber * sizeNumber,
+            order: [
+                ['price', 'DESC']
+            ],
+            include: [{
+                model: Rating,
+                as: 'rating',
+                attributes: ['rate', 'count']
+            }]
+        });
+        //cache the results
+        await redisClient.set(cacheKey, JSON.stringify(results.rows));
+        return {
+            products: results.rows,
+            pageCount: Math.ceil(results.count / sizeNumber)
+        };
     }
-    let sizeNumber = 10;
-    if (!Number.isNaN(size) && size > 0 && size < 10) {
-        sizeNumber = size;
-    }
-
-    const whereClause = searchTitle ? { title: { [Op.like]: `%${searchTitle}%` } } : {};
-
-    const results = await Product.findAndCountAll({
-        where: whereClause,
-        limit: sizeNumber,
-        offset: pageNumber * sizeNumber,
-        order: [
-            ['price', 'DESC']
-        ],
-        include: [{
-            model: Rating,
-            as: 'rating',
-            attributes: ['rate', 'count']
-        }]
-    });
-
-    return {
-        products: results.rows,
-        pageCount: Math.ceil(results.count / sizeNumber)
-    };
-};
+}    
 
 const getCategories = async () => {
     return productCategories;

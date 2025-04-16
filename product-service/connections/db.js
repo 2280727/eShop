@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+
+
 const sequelize = new Sequelize('postgres', 'postgres', process.env.POSTGRES_PASSWORD, {
     host: '135.181.150.234',
     dialect: 'postgres',
@@ -20,5 +22,6 @@ const connectDB = async () => {
 }
 
 connectDB();
+
 
 export default sequelize;

@@ -1,4 +1,4 @@
-import sequelize from "../db.js";
+import sequelize from "../connections/db.js";
 import _Products from './products.json' assert { type: 'json' };
 import Product from "../models/Product.js";
 import Rating from "../models/Rating.js";

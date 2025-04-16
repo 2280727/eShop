@@ -1,4 +1,4 @@
-import sequelize from "../db.js";
+import sequelize from "../connections/db.js";
 import { DataTypes, Sequelize } from "sequelize";
 import { productCategories } from "../data/product.js";
 

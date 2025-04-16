@@ -1,5 +1,6 @@
 import express from 'express';
-import sequelize from './db.js';
+import sequelize from './connections/db.js';   
+import redisClient from './connections/redis.js';
 import productRouter from './routes/productRouter.js'
 import { NotFoundError } from './errors/index.js';
 import cors from 'cors'
@@ -24,6 +25,7 @@ app.use((error, req, res, next) => {
         error: "Oops something went wrong, try again later"
     })
 })
+
 
 sequelize.sync();
 
