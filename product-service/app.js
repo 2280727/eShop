@@ -5,7 +5,8 @@ import productRouter from './routes/productRouter.js'
 import { NotFoundError } from './errors/index.js';
 import cors from 'cors'
 import { rateLimiter } from './middlewares/rate-limiter.js';
-
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './swagger.json' assert { type: "json" };
 
 initTracing({
     serviceName: 'product_service',
@@ -18,7 +19,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use(rateLimiter)
-app.use('/products', productRouter);
+app.use('/v1/products', productRouter);
 
 app.use((error, req, res, next) => {
     console.error("Error", error)
@@ -32,7 +33,7 @@ app.use((error, req, res, next) => {
         error: "Oops something went wrong, try again later"
     })
 })
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 sequelize.sync();
 

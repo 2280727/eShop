@@ -1,0 +1,254 @@
+{  
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Product service",
+        "description": "API documentation for product service",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "host": "135.181.150.234:7000",
+    "basePath": "/v1",
+    "schemes": ["http"],
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "tags": [
+        {
+            "name": "products",
+            "description": "Operations about products"
+        }
+    ],
+    "paths": {
+        "/products": {
+            "get": {
+                "tags": ["products"],
+                "summary": "Get all products",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "type": "integer",
+                        "default": 0
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "type": "integer",
+                        "default": 10
+                    },
+                    {
+                        "name": "searchTitle",
+                        "in": "query",
+                        "description": "Search products by title",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "products": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Product"
+                                    }
+                                },
+                                "pageCount": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["products"],
+                "summary": "Create a new product",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "body",
+                        "description": "Product object to be created",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ProductInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Product created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/Product"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/products/categories": {
+            "get": {
+                "tags": ["products"],
+                "summary": "Get all product categories",
+                "responses": {
+                    "200": {
+                        "description": "List of categories",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/products/category/{category}": {
+            "get": {
+                "tags": ["products"],
+                "summary": "Get products by category",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "Category name"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of products in category",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Product"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    }
+                }
+            }
+        },
+        "/products/{id}": {
+            "patch": {
+                "tags": ["products"],
+                "summary": "Update a product",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "Product UUID"
+                    },
+                    {
+                        "name": "product",
+                        "in": "body",
+                        "description": "Updated product fields",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ProductInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/Product"
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Product": {
+            "type": "object",
+            "properties": {
+                "uuid": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number",
+                    "format": "float"
+                },
+                "rating": {
+                    "$ref": "#/definitions/Rating"
+                }
+            }
+        },
+        "Rating": {
+            "type": "object",
+            "properties": {
+                "rate": {
+                    "type": "number",
+                    "format": "float",
+                    "minimum": 0,
+                    "maximum": 5
+                },
+                "count": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "ProductInput": {
+            "type": "object",
+            "required": ["title", "description", "category", "image", "price", "rating"],
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "minLength": 3
+                },
+                "description": {
+                    "type": "string",
+                    "minLength": 10
+                },
+                "category": {
+                    "type": "string",
+                    "enum": ["men's clothing", "women's clothing", "jewelery", "electronics"]
+                },
+                "image": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "price": {
+                    "type": "number",
+                    "format": "float",
+                    "minimum": 0
+                },
+                "rating": {
+                    "$ref": "#/definitions/Rating"
+                }
+            }
+        }
+    }
+}
