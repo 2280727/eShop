@@ -12,10 +12,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@opentelemetry/resources": "1.17.0",
-    "@opentelemetry/sdk-node": "0.34.0",
     "@opentelemetry/auto-instrumentations-node": "0.37.0",
     "@opentelemetry/exporter-trace-otlp-http": "0.34.0",
+    "@opentelemetry/resources": "1.17.0",
+    "@opentelemetry/sdk-node": "0.34.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
@@ -25,7 +25,8 @@
     "pg-hstore": "^2.3.4",
     "redis": "^4.7.0",
     "sequelize": "^6.37.7",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "xss-clean": "^0.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
