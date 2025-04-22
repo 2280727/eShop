@@ -7,7 +7,7 @@ import cors from 'cors'
 import { rateLimiter } from './middlewares/rate-limiter.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './swagger.json' assert { type: "json" };
-import xss from 'xss-clean';
+
 
 initTracing({
     serviceName: 'product_service',
@@ -18,7 +18,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(xss()); // Add XSS protection middleware
+
 
 app.use(rateLimiter)
 app.use('/v1/products', productRouter);
