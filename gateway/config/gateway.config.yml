@@ -1,8 +1,5 @@
 http:
   port: 8081
-admin:
-  port: 9877
-  host: 135.181.150.234
 apiEndpoints:
   api:
     host: 135.181.150.234
