@@ -60,7 +60,7 @@ jobs:
               -e POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}} \
               -e POSTGRES_USER=${{secrets.POSTGRES_USER}} \
               -e POSTGRES_DB=${{secrets.POSTGRES_DB}} \
-              -p 8080:8080 \
-              -p 9876:9876 \
+              -p 8081:8080 \
+              -p 9877:9876 \
               ${{ env.DOCKER_IMAGE }}"
           echo 'Deployment completed successfully!'
