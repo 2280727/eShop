@@ -1,5 +1,5 @@
 http:
-  port: 8080
+  port: 8081
 admin:
   port: 9876
   host: 135.181.150.234
@@ -13,7 +13,7 @@ apiEndpoints:
     methods: ['GET']
 serviceEndpoints:
   httpbin:
-    url: 'http://135.181.150.234:7000/v1/products/'
+    url: 'http://135.181.150.234:7000/v1/products'
 policies:
   - basic-auth
   - cors
