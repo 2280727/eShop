@@ -1,0 +1,66 @@
+name: Deploy to Hetzner
+
+on:
+  push:
+    branches: [ "develop" ]
+    paths:
+      - 'gateway/**'
+      - '.github/workflows/gateway.yml'
+
+env:
+  DOCKER_IMAGE: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:${{ github.sha }}
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and push Docker image
+        run: |
+          docker build --platform linux/amd64 -t ${{ env.DOCKER_IMAGE }} ./gateway
+          docker push ${{ env.DOCKER_IMAGE }}
+
+  deploy:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} "
+            docker pull ${{ env.DOCKER_IMAGE }} && \
+            docker stop gateway || true && \
+            docker rm gateway || true && \
+            docker run -d \
+              --name gateway \
+              --restart unless-stopped \
+              -e POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}} \
+              -e POSTGRES_USER=${{secrets.POSTGRES_USER}} \
+              -e POSTGRES_DB=${{secrets.POSTGRES_DB}} \
+              -p 8080:8080 \
+              -p 9876:9876 \
+              ${{ env.DOCKER_IMAGE }}"
+          echo 'Deployment completed successfully!'

@@ -1,0 +1,13 @@
+{
+  "name": "eshop",
+  "version": "1.0.0",
+  "description": "eShop microservices",
+  "scripts": {
+    "products": "cd product-service && npm run dev",
+    "gateway": "cd gateway && npm run start",
+    "all": "npm run products & npm run gateway",
+    "install:all": "cd product-service && npm install && cd ../gateway && npm install"
+  },
+  "author": "",
+  "license": "ISC"
+}
