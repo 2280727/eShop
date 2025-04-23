@@ -3,14 +3,18 @@ http:
 apiEndpoints:
   api:
     host: 135.181.150.234
-    paths: '/categories*'
-  health:
-    host: '*'
-    paths: '/health'
-    methods: ['GET']
+    paths: [
+      '/products',
+      '/products*',
+      '/categories',
+      '/categories/*',
+      '/products/search',
+      '/products/category/*',
+      '/products/:id'
+    ]
 serviceEndpoints:
   httpbin:
-    url: 'http://135.181.150.234:7000/v1/products'
+    url: 'http://135.181.150.234:7000/v1'
 policies:
   - basic-auth
   - cors
