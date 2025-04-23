@@ -2,10 +2,10 @@ http:
   port: 8080
 admin:
   port: 9876
-  host: localhost
+  host: 135.181.150.234
 apiEndpoints:
   api:
-    host: localhost
+    host: 135.181.150.234
     paths: '/categories*'
   health:
     host: '*'
